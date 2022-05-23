@@ -21,8 +21,8 @@ app.use(express.json())
 
 const port = process.env.PORT || 5000
 
-app.get('/', (req, res) => {
-  res.send('Welcome!')
+app.get('/api/v1', (req, res) => {
+   res.json({msg: 'API!'})
 })
 
 app.use('/api/v1/auth', authRoutes)
@@ -38,7 +38,7 @@ const start = async () => {
       console.log(`Server is running on port : ${port}`)
     })
   } catch (err) {
-    console.log(err, 'hi')
+    console.log(err)
   }
 }
 
