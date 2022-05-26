@@ -6,7 +6,7 @@ const register = async (req, res,) => {
   const { name, email, password } = req.body
 
   if (!name || !email || !password) {
-    throw new BadRequestError('please provide all values')
+    throw new BadRequestError('Please provide all values')
   }
   const userAlreadyExists = await User.findOne({ email })
   if (userAlreadyExists) {
@@ -36,12 +36,12 @@ const login = async (req, res) => {
 
   const user = await User.findOne({ email }).select('+password')
   if (!user) {
-    throw new UnAuthenticated('invalid credentials')
+    throw new UnAuthenticated('Invalid credentials')
   }
 
   const isPasswordCorrect = await user.comparePassword(password)
   if (!isPasswordCorrect) {
-    throw new UnAuthenticated('invalid credentials')
+    throw new UnAuthenticated('Invalid credentials')
   }
 
   const token = user.createJWT()
