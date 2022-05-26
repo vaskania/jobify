@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from 'react'
+import React, {useReducer, useContext} from 'react'
 import reducer from "./reducer";
 import {
   CLEAR_ALERT,
@@ -22,17 +22,25 @@ const initialState = {
   user: user ? JSON.parse(user) : null,
   token,
   userLocation: userLocation || '',
-  jobLocation: userLocation || '',
   isLoading: false,
   showAlert: false,
   alertText: '',
   alertType: '',
-  showSidebar: false
+  showSidebar: false,
+  isEditing: false,
+  editJobId: '',
+  position: '',
+  company: '',
+  jobLocation: userLocation || '',
+  jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
+  jobType: 'full-time',
+  statusOptions: ['pending', 'interview', 'declined',],
+  statusType: 'pending'
 };
 
 const AppContext = React.createContext()
 
-const AppProvider = ({ children }) => {
+const AppProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const authFetch = axios.create({
@@ -56,17 +64,17 @@ const AppProvider = ({ children }) => {
   })
 
   const displayAlert = () => {
-    dispatch({ type: DISPLAY_ALERT })
+    dispatch({type: DISPLAY_ALERT})
     clearAlert()
   }
 
   const clearAlert = () => {
     setTimeout(() => {
-      dispatch({ type: CLEAR_ALERT })
+      dispatch({type: CLEAR_ALERT})
     }, 3000)
   }
 
-  const addUserToLocalStorage = ({ user, token, location }) => {
+  const addUserToLocalStorage = ({user, token, location}) => {
     localStorage.setItem('user', JSON.stringify(user))
     localStorage.setItem('token', token)
     localStorage.setItem('location', location)
@@ -78,43 +86,43 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem('location')
   }
 
-  const setupUser = async ({ currentUser, endPoint, alertText }) => {
-    dispatch({ type: SETUP_USER_BEGIN })
+  const setupUser = async ({currentUser, endPoint, alertText}) => {
+    dispatch({type: SETUP_USER_BEGIN})
     try {
-      const { data } = await axios.post(`/api/v1/auth/${endPoint}`, currentUser)
-      const { user, token, location } = data
+      const {data} = await axios.post(`/api/v1/auth/${endPoint}`, currentUser)
+      const {user, token, location} = data
 
-      dispatch({ type: SETUP_USER_SUCCESS, payload: { user, token, location, alertText } })
+      dispatch({type: SETUP_USER_SUCCESS, payload: {user, token, location, alertText}})
 
-      addUserToLocalStorage({ user, token, location })
+      addUserToLocalStorage({user, token, location})
     } catch (error) {
-      dispatch({ type: SETUP_USER_ERROR, payload: { msg: error.response.data.msg } })
+      dispatch({type: SETUP_USER_ERROR, payload: {msg: error.response.data.msg}})
 
     }
     clearAlert()
   }
 
   const toggleSidebar = () => {
-    dispatch({ type: TOGGLE_SIDEBAR })
+    dispatch({type: TOGGLE_SIDEBAR})
   }
 
   const logoutUser = () => {
-    dispatch({ type: LOGOUT_USER })
+    dispatch({type: LOGOUT_USER})
     removeToLocalStorage()
   }
 
   const updateUser = async (currentUser) => {
-    dispatch({ type: UPDATE_USER_BEGIN })
+    dispatch({type: UPDATE_USER_BEGIN})
     try {
-      const { data } = await authFetch.patch('/auth/updateUser', currentUser)
-      const { user, token, location } = data
+      const {data} = await authFetch.patch('/auth/updateUser', currentUser)
+      const {user, token, location} = data
 
-      dispatch({ type: UPDATE_USER_SUCCESS, payload: { user, token, location } })
+      dispatch({type: UPDATE_USER_SUCCESS, payload: {user, token, location}})
 
-      addUserToLocalStorage({ user, token, location })
+      addUserToLocalStorage({user, token, location})
     } catch (error) {
       if (error.response.status !== 401) {
-        dispatch({ type: UPDATE_USER_ERROR, payload: { msg: error.response.data.msg } })
+        dispatch({type: UPDATE_USER_ERROR, payload: {msg: error.response.data.msg}})
       }
 
     }
@@ -122,14 +130,14 @@ const AppProvider = ({ children }) => {
   }
 
   return (
-     <AppContext.Provider value={{
-       ...state,
-       displayAlert,
-       setupUser,
-       toggleSidebar,
-       logoutUser,
-       updateUser
-     }}>{children}</AppContext.Provider>
+      <AppContext.Provider value={{
+        ...state,
+        displayAlert,
+        setupUser,
+        toggleSidebar,
+        logoutUser,
+        updateUser
+      }}>{children}</AppContext.Provider>
   )
 }
 
@@ -137,6 +145,6 @@ const useAppContext = () => {
   return useContext(AppContext)
 }
 
-export { AppProvider, initialState, useAppContext }
+export {AppProvider, initialState, useAppContext}
 
 
