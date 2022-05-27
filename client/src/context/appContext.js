@@ -15,7 +15,10 @@ import {
   CLEAR_VALUES,
   CREATE_JOB_BEGIN,
   CREATE_JOB_SUCCESS,
-  CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS
+  CREATE_JOB_ERROR,
+  GET_JOBS_BEGIN,
+  GET_JOBS_SUCCESS,
+  SET_EDIT_JOB
 } from "./action";
 import axios from 'axios'
 
@@ -183,13 +186,16 @@ const AppProvider = ({children}) => {
       dispatch({type: GET_JOBS_SUCCESS, payload: {jobs, totalJobs, numOfPages}})
     } catch (error) {
       console.log(error.response)
-      // logoutUser()
+      logoutUser()
     }
     clearAlert()
   }
 
   const setEditJob = (id) => {
-    console.log(`set edit job : ${id}`)
+    dispatch({type: SET_EDIT_JOB, payload: {id}})
+  }
+  const editJob = () => {
+    console.log('edit job')
   }
 
   const deleteJob = (id) => {
@@ -209,7 +215,8 @@ const AppProvider = ({children}) => {
         createJob,
         getJobs,
         setEditJob,
-        deleteJob
+        deleteJob,
+        editJob
       }}>{children}</AppContext.Provider>
   )
 }
