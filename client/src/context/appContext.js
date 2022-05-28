@@ -22,7 +22,9 @@ import {
   DELETE_JOB_BEGIN,
   EDIT_JOB_BEGIN,
   EDIT_JOB_SUCCESS,
-  EDIT_JOB_ERROR
+  EDIT_JOB_ERROR,
+  SHOW_STATS_BEGIN,
+  SHOW_STATS_SUCCESS
 } from "./action";
 import axios from 'axios'
 
@@ -51,7 +53,9 @@ const initialState = {
   jobs: [],
   totalJobs: 0,
   page: 1,
-  numOfPages: 1
+  numOfPages: 1,
+  stats: {},
+  monthlyApplications: []
 };
 
 const AppContext = React.createContext()
@@ -228,6 +232,23 @@ const AppProvider = ({children}) => {
     }
   }
 
+  const showStats = async () => {
+    dispatch({type: SHOW_STATS_BEGIN})
+    try {
+      const {data} = await authFetch('/jobs/stats')
+      dispatch({
+        type: SHOW_STATS_SUCCESS,
+        payload: {
+          stats: data.defaultStats,
+          monthlyApplications: data.monthlyApplications
+        }
+      })
+    } catch (error) {
+      logoutUser()
+    }
+    clearAlert()
+  }
+
   return (
       <AppContext.Provider value={{
         ...state,
@@ -242,7 +263,8 @@ const AppProvider = ({children}) => {
         getJobs,
         setEditJob,
         deleteJob,
-        editJob
+        editJob,
+        showStats
       }}>{children}</AppContext.Provider>
   )
 }
