@@ -13,13 +13,13 @@ const JobsContainer = () => {
     getJobs,
     search,
     searchStatus,
-    seatchType,
+    searchType,
     sort
   } = useAppContext()
 
   useEffect(() => {
     getJobs()
-  }, [search, searchStatus, seatchType, sort]);
+  }, [search, searchStatus, searchType, sort]);
 
   if (isLoading) {
     return <Loading center/>
