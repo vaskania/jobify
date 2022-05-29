@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "build-client": "cd client && npm run build"
+    "build-client": "cd client && npm run build",
+    "server": "nodemon server --ignore client",
+    "client": "npm start --prefix client",
+    "start": "concurrently --kill-other-on-fail \" npm run server\" \" npm run client\""
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "moment": "^2.29.3",
     "mongoose": "^6.3.4",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.16",
     "validator": "^13.7.0"
   },
   "devDependencies": {
